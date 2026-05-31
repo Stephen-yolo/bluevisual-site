@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue Visual — Architectural Visualization Studio</title>
+  <meta name="description" content="Stunning, immersive architectural visuals that capture the essence of your designs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --bg-alt: #141414;
+      --text: #c2c2c2;
+      --text-dim: #787878;
+      --text-bright: #f5f5f5;
+      --accent: #5680c7;
+      --border: rgba(255,255,255,0.06);
+      --radius: 2px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- NAV ---------- */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 28px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      mix-blend-mode: difference;
+      pointer-events: none;
+    }
+    .nav a, .nav button { pointer-events: auto; }
+    .nav-logo {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-bright);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--text-bright); }
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-bright);
+      font-size: 14px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 640px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 48px 72px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        180deg,
+        rgba(0,0,0,0.25) 0%,
+        rgba(0,0,0,0.08) 40%,
+        rgba(0,0,0,0.45) 100%
+      );
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 720px; }
+    .hero-tag {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5.5vw, 64px);
+      font-weight: 300;
+      line-height: 1.12;
+      color: var(--text-bright);
+      letter-spacing: -0.02em;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    /* ---------- SECTIONS ---------- */
+    section { padding: 120px 48px; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+    }
+    .section-title {
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: 300;
+      line-height: 1.3;
+      color: var(--text-bright);
+      max-width: 640px;
+      margin-bottom: 56px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ---------- SERVICES ---------- */
+    .services {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .service-item { border-top: 1px solid var(--border); padding-top: 28px; }
+    .service-item h3 {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-bright);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .service-item p {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ---------- WORK ---------- */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: minmax(360px, auto);
+      grid-auto-flow: dense;
+      gap: 10px;
+    }
+    .work-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--bg-alt);
+      min-height: 360px;
+    }
+    .work-item img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.2s cubic-bezier(0.25, 0.1, 0.1, 1);
+    }
+    .work-item:hover img {
+      transform: scale(1.04);
+    }
+    .work-item-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      background: linear-gradient(transparent 50%, rgba(0,0,0,0.7) 100%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .work-item:hover .work-item-overlay { opacity: 1; }
+    .work-item-cat {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+    }
+    .work-item-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    /* Varied tile shapes */
+    .work-item.w1x1 { grid-column: span 1; grid-row: span 1; }
+    .work-item.w2x1 { grid-column: span 2; grid-row: span 1; }
+    .work-item.w1x2 { grid-column: span 1; grid-row: span 2; }
+    .work-item.w2x2 { grid-column: span 2; grid-row: span 2; }
+
+    /* ---------- LIGHTBOX ---------- */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .lightbox.active { opacity: 1; pointer-events: auto; }
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 2px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+      font-size: 28px;
+      color: rgba(255,255,255,0.7);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .lightbox-close:hover { color: #fff; }
+    .lightbox-prev, .lightbox-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 36px;
+      color: rgba(255,255,255,0.5);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 16px;
+      transition: color 0.3s;
+    }
+    .lightbox-prev:hover, .lightbox-next:hover { color: #fff; }
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+
+    /* ---------- ABOUT ---------- */
+    .about { background: var(--bg-alt); border-top: 1px solid var(--border); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+    .about-text p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .about-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .about-meta-item h4 {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .about-meta-item p { font-size: 15px; color: var(--text-bright); font-weight: 400; }
+
+    .about-art {
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .about-art svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ---------- CONTACT ---------- */
+    .contact { text-align: center; }
+    .contact .section-title { margin-left: auto; margin-right: auto; }
+    .contact-email {
+      display: inline-block;
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 300;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: color 0.3s;
+      margin-bottom: 32px;
+    }
+    .contact-email:hover { color: var(--text-bright); }
+    .contact-social {
+      display: flex;
+      gap: 28px;
+      justify-content: center;
+    }
+    .contact-social a {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.3s;
+    }
+    .contact-social a:hover { color: var(--text-bright); }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    /* ---------- FADE-IN ---------- */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 900px) {
+      .nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+      .menu-toggle { display: block; }
+
+      section { padding: 80px 24px; }
+      .hero { padding: 0 24px 56px; }
+
+      .services-grid { grid-template-columns: 1fr; gap: 24px; }
+      .work-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(260px, auto); }
+      .work-item.w2x2 { grid-column: span 2; grid-row: span 1; }
+      .work-item.w2x1 { grid-column: span 2; }
+      .work-item.w1x2 { grid-row: span 1; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+
+      .lightbox-prev, .lightbox-next { font-size: 24px; padding: 8px; }
+
+      footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+    }
+
+    @media (max-width: 540px) {
+      .work-grid { grid-template-columns: 1fr; grid-auto-rows: minmax(300px, auto); }
+      .work-item.w2x2,
+      .work-item.w2x1 { grid-column: auto; grid-row: span 1; }
+      .work-item.w1x2 { grid-row: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="#" class="nav-logo">Blue Visual</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="menu-toggle" aria-label="Menu">Menu</button>
+  </nav>
+
+  <section class="hero">
+    <video class="hero-video" autoplay loop muted playsinline poster="images/0011.webp">
+      <source src="videos/hero-bg.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content fade-in visible">
+      <p class="hero-tag">Architectural Visualization Studio</p>
+      <h1>We create <em>immersive visuals</em> that bring unbuilt spaces to life.</h1>
+    </div>
+  </section>
+
+  <section id="services" class="services">
+    <p class="section-label">What We Do</p>
+    <h2 class="section-title fade-in">Stunning imagery that captures the essence of your designs.</h2>
+    <div class="services-grid">
+      <div class="service-item fade-in">
+        <h3>Still Imagery</h3>
+        <p>Photorealistic exterior and interior renders with precise attention to light, material, and atmosphere — from conceptual studies to marketing-grade hero shots.</p>
+      </div>
+      <div class="service-item fade-in">
+        <h3>Film & Animation</h3>
+        <p>Cinematic walkthroughs and short films that tell the story of a place before it exists. Camera motion, sound design, and narrative pacing included.</p>
+      </div>
+      <div class="service-item fade-in">
+        <h3>Interactive & VR</h3>
+        <p>Real-time experiences and virtual reality tours for client presentations, competitions, and stakeholder engagement. Built with Unreal Engine.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="work-section">
+    <p class="section-label">Selected Work</p>
+    <div class="work-grid fade-in visible">
+<div class="work-item w1x1"><img src="images/0011.webp" alt="0011" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">0011</span></div></div>
+      <div class="work-item w1x1"><img src="images/00110.webp" alt="00110" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">00110</span></div></div>
+      <div class="work-item w2x1"><img src="images/00112.webp" alt="00112" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">00112</span></div></div>
+      <div class="work-item w1x1"><img src="images/00113.webp" alt="00113" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">00113</span></div></div>
+      <div class="work-item w1x2"><img src="images/00115.webp" alt="00115" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">00115</span></div></div>
+      <div class="work-item w1x1"><img src="images/00116.webp" alt="00116" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">00116</span></div></div>
+      <div class="work-item w2x2"><img src="images/00117.webp" alt="00117" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">00117</span></div></div>
+      <div class="work-item w1x1"><img src="images/00118.webp" alt="00118" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">00118</span></div></div>
+      <div class="work-item w1x1"><img src="images/0012.webp" alt="0012" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">0012</span></div></div>
+      <div class="work-item w1x2"><img src="images/0013.webp" alt="0013" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">0013</span></div></div>
+      <div class="work-item w1x1"><img src="images/0014.webp" alt="0014" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">0014</span></div></div>
+      <div class="work-item w2x1"><img src="images/0015.webp" alt="0015" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">0015</span></div></div>
+      <div class="work-item w1x1"><img src="images/0016.webp" alt="0016" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">0016</span></div></div>
+      <div class="work-item w1x1"><img src="images/0017.webp" alt="0017" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">0017</span></div></div>
+      <div class="work-item w1x2"><img src="images/0018.webp" alt="0018" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">0018</span></div></div>
+      <div class="work-item w2x1"><img src="images/0019.webp" alt="0019" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">0019</span></div></div>
+      <div class="work-item w1x1"><img src="images/659e745a716fc.jpg" alt="659e745a716fc" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">659e745a716fc</span></div></div>
+      <div class="work-item w1x1"><img src="images/659e745b7081a.jpg" alt="659e745b7081a" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">659e745b7081a</span></div></div>
+      <div class="work-item w1x1"><img src="images/659e745d7c37a.jpg" alt="659e745d7c37a" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">659e745d7c37a</span></div></div>
+      <div class="work-item w2x2"><img src="images/659e745f6677c.jpg" alt="659e745f6677c" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">659e745f6677c</span></div></div>
+      <div class="work-item w1x1"><img src="images/659e746071484.jpg" alt="659e746071484" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">659e746071484</span></div></div>
+      <div class="work-item w1x1"><img src="images/65aded3aafb45.jpg" alt="65aded3aafb45" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">65aded3aafb45</span></div></div>
+      <div class="work-item w1x2"><img src="images/65aded3bafe78.jpg" alt="65aded3bafe78" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">65aded3bafe78</span></div></div>
+      <div class="work-item w2x1"><img src="images/65aded40ae658.jpg" alt="65aded40ae658" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">65aded40ae658</span></div></div>
+      <div class="work-item w1x1"><img src="images/65b0803a6af46.jpg" alt="65b0803a6af46" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">65b0803a6af46</span></div></div>
+      <div class="work-item w1x1"><img src="images/65b0803c6aa94.jpg" alt="65b0803c6aa94" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">65b0803c6aa94</span></div></div>
+      <div class="work-item w1x1"><img src="images/65e9ba0180d63.jpg" alt="65e9ba0180d63" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">65e9ba0180d63</span></div></div>
+      <div class="work-item w1x2"><img src="images/65e9ba04777e4.jpg" alt="65e9ba04777e4" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">65e9ba04777e4</span></div></div>
+      <div class="work-item w1x1"><img src="images/65fa712205d55.jpg" alt="65fa712205d55" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">65fa712205d55</span></div></div>
+      <div class="work-item w2x1"><img src="images/661368bf8616e.jpg" alt="661368bf8616e" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">661368bf8616e</span></div></div>
+      <div class="work-item w1x1"><img src="images/661368c07c37c.jpg" alt="661368c07c37c" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">661368c07c37c</span></div></div>
+      <div class="work-item w1x1"><img src="images/66174a0570bb2.jpg" alt="66174a0570bb2" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">66174a0570bb2</span></div></div>
+      <div class="work-item w2x1"><img src="images/66174a0679b71.jpg" alt="66174a0679b71" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">66174a0679b71</span></div></div>
+      <div class="work-item w1x1"><img src="images/661e31a4bf977.jpg" alt="661e31a4bf977" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">661e31a4bf977</span></div></div>
+      <div class="work-item w1x2"><img src="images/662797caa019d.jpg" alt="662797caa019d" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">662797caa019d</span></div></div>
+      <div class="work-item w1x1"><img src="images/662797cba2183.jpg" alt="662797cba2183" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">662797cba2183</span></div></div>
+      <div class="work-item w2x2"><img src="images/66288a28b7bf7.jpg" alt="66288a28b7bf7" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">66288a28b7bf7</span></div></div>
+      <div class="work-item w1x1"><img src="images/662a049ce740b.jpg" alt="662a049ce740b" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">662a049ce740b</span></div></div>
+      <div class="work-item w1x1"><img src="images/662f3e87973ef.jpg" alt="662f3e87973ef" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">662f3e87973ef</span></div></div>
+      <div class="work-item w1x2"><img src="images/662f43fa517a3.jpg" alt="662f43fa517a3" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">662f43fa517a3</span></div></div>
+      <div class="work-item w1x1"><img src="images/663b1c5425fcf.jpg" alt="663b1c5425fcf" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">663b1c5425fcf</span></div></div>
+      <div class="work-item w2x1"><img src="images/664e940c901ca.jpg" alt="664e940c901ca" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">664e940c901ca</span></div></div>
+      <div class="work-item w1x1"><img src="images/665049dfaf8b0.jpg" alt="665049dfaf8b0" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">665049dfaf8b0</span></div></div>
+      <div class="work-item w1x1"><img src="images/6667d3cdb1d23.jpg" alt="6667d3cdb1d23" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">6667d3cdb1d23</span></div></div>
+      <div class="work-item w1x2"><img src="images/6667d85f1057a.jpg" alt="6667d85f1057a" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">6667d85f1057a</span></div></div>
+      <div class="work-item w2x1"><img src="images/6674fb34048cb.jpg" alt="6674fb34048cb" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">6674fb34048cb</span></div></div>
+      <div class="work-item w1x1"><img src="images/667512e2e467a.jpg" alt="667512e2e467a" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">667512e2e467a</span></div></div>
+      <div class="work-item w1x1"><img src="images/667a47e0f39e1.jpg" alt="667a47e0f39e1" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">667a47e0f39e1</span></div></div>
+      <div class="work-item w1x1"><img src="images/667e426e33059.jpg" alt="667e426e33059" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">667e426e33059</span></div></div>
+      <div class="work-item w2x2"><img src="images/66862379f280e.jpg" alt="66862379f280e" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">66862379f280e</span></div></div>
+      <div class="work-item w1x1"><img src="images/66865e8be7480.jpg" alt="66865e8be7480" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">66865e8be7480</span></div></div>
+      <div class="work-item w1x1"><img src="images/6686603c8908f.jpg" alt="6686603c8908f" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">6686603c8908f</span></div></div>
+      <div class="work-item w1x2"><img src="images/668b8e56d8632.jpg" alt="668b8e56d8632" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">668b8e56d8632</span></div></div>
+      <div class="work-item w2x1"><img src="images/668e015aa80b3.jpg" alt="668e015aa80b3" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">668e015aa80b3</span></div></div>
+      <div class="work-item w1x1"><img src="images/668f9aeac5979.jpg" alt="668f9aeac5979" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">668f9aeac5979</span></div></div>
+      <div class="work-item w1x1"><img src="images/6699e4f87f8c3.jpg" alt="6699e4f87f8c3" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">6699e4f87f8c3</span></div></div>
+      <div class="work-item w1x1"><img src="images/66dfd4910cda0.jpg" alt="66dfd4910cda0" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">66dfd4910cda0</span></div></div>
+      <div class="work-item w1x2"><img src="images/675ff3a3ee4ea.jpg" alt="675ff3a3ee4ea" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">675ff3a3ee4ea</span></div></div>
+      <div class="work-item w1x1"><img src="images/67736bc8cb06f.jpg" alt="67736bc8cb06f" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">67736bc8cb06f</span></div></div>
+      <div class="work-item w2x1"><img src="images/677faad936c1e.jpg" alt="677faad936c1e" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">677faad936c1e</span></div></div>
+      <div class="work-item w1x1"><img src="images/678480d5016d7.jpg" alt="678480d5016d7" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">678480d5016d7</span></div></div>
+      <div class="work-item w1x1"><img src="images/689444eaa7b52.jpg" alt="689444eaa7b52" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">689444eaa7b52</span></div></div>
+      <div class="work-item w2x1"><img src="images/6895af9d6de30.jpg" alt="6895af9d6de30" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">6895af9d6de30</span></div></div>
+      <div class="work-item w1x1"><img src="images/689d5ea9113a4.jpg" alt="689d5ea9113a4" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">689d5ea9113a4</span></div></div>
+      <div class="work-item w1x2"><img src="images/68a2bb295b196.jpg" alt="68a2bb295b196" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">68a2bb295b196</span></div></div>
+      <div class="work-item w1x1"><img src="images/68bfff816f591.jpg" alt="68bfff816f591" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">68bfff816f591</span></div></div>
+      <div class="work-item w2x2"><img src="images/68bfff827205f.jpg" alt="68bfff827205f" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">68bfff827205f</span></div></div>
+      <div class="work-item w1x1"><img src="images/68c10370f0950.jpg" alt="68c10370f0950" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">68c10370f0950</span></div></div>
+      <div class="work-item w1x1"><img src="images/68c10483c22f4.jpg" alt="68c10483c22f4" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">68c10483c22f4</span></div></div>
+      <div class="work-item w1x2"><img src="images/68c10485832b2.jpg" alt="68c10485832b2" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">68c10485832b2</span></div></div>
+      <div class="work-item w1x1"><img src="images/68c104868dab1.jpg" alt="68c104868dab1" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">68c104868dab1</span></div></div>
+      <div class="work-item w2x1"><img src="images/68c1048981265.jpg" alt="68c1048981265" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">68c1048981265</span></div></div>
+      <div class="work-item w1x1"><img src="images/68c1048b80591.jpg" alt="68c1048b80591" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">68c1048b80591</span></div></div>
+      <div class="work-item w1x1"><img src="images/68c91fd791196.jpg" alt="68c91fd791196" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">68c91fd791196</span></div></div>
+      <div class="work-item w1x2"><img src="images/68c92a54de7fa.jpg" alt="68c92a54de7fa" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">68c92a54de7fa</span></div></div>
+      <div class="work-item w2x1"><img src="images/68ce243d2420f.jpg" alt="68ce243d2420f" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">68ce243d2420f</span></div></div>
+      <div class="work-item w1x1"><img src="images/68ce243f250a3.jpg" alt="68ce243f250a3" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">68ce243f250a3</span></div></div>
+      <div class="work-item w1x1"><img src="images/68f9d1b4c6c69.jpg" alt="68f9d1b4c6c69" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">68f9d1b4c6c69</span></div></div>
+      <div class="work-item w1x1"><img src="images/68f9d1b7c6bf0.jpg" alt="68f9d1b7c6bf0" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">68f9d1b7c6bf0</span></div></div>
+      <div class="work-item w2x2"><img src="images/68fb3e668a2a4.jpg" alt="68fb3e668a2a4" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">68fb3e668a2a4</span></div></div>
+      <div class="work-item w1x1"><img src="images/68fb3fa3387aa.jpg" alt="68fb3fa3387aa" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Aerial</span><span class="work-item-title">68fb3fa3387aa</span></div></div>
+      <div class="work-item w1x1"><img src="images/690454ae4a227.jpg" alt="690454ae4a227" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Exterior</span><span class="work-item-title">690454ae4a227</span></div></div>
+      <div class="work-item w1x2"><img src="images/690454af4b448.jpg" alt="690454af4b448" loading="lazy"><div class="work-item-overlay"><span class="work-item-cat">Interior</span><span class="work-item-title">690454af4b448</span></div></div>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <p class="section-label">About</p>
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <p>Blue Visual is an architectural visualization studio dedicated to one thing: making unbuilt architecture feel real. We work with architects, developers, and design firms to produce imagery that doesn't just show a building — it communicates atmosphere, materiality, and intent.</p>
+        <p>Our team is dedicated to delivering stunning, immersive visuals that capture the essence of your designs. Every project is approached with a filmmaker's eye for light and composition, and an architect's understanding of space.</p>
+        <div class="about-meta">
+          <div class="about-meta-item">
+            <h4>Location</h4>
+            <p>Worldwide</p>
+          </div>
+          <div class="about-meta-item">
+            <h4>Founded</h4>
+            <p>2015</p>
+          </div>
+          <div class="about-meta-item">
+            <h4>Clients</h4>
+            <p>Architects & Developers</p>
+          </div>
+          <div class="about-meta-item">
+            <h4>Focus</h4>
+            <p>Architectural CGI</p>
+          </div>
+        </div>
+      </div>
+      <div class="about-art">
+        <svg viewBox="0 0 480 600" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#060914"/><stop offset="50%" stop-color="#0d1328"/><stop offset="100%" stop-color="#0e1632"/></linearGradient>
+            <linearGradient id="ambientGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(86,128,199,0.12)"/><stop offset="60%" stop-color="rgba(86,128,199,0.05)"/><stop offset="100%" stop-color="rgba(86,128,199,0)"/></linearGradient>
+            <linearGradient id="glowPool" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(86,128,199,0.1)"/><stop offset="100%" stop-color="rgba(86,128,199,0)"/></linearGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="glowStrong"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="glowSoft"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <clipPath id="cityClip"><rect x="0" y="0" width="480" height="440"/></clipPath>
+          </defs>
+
+          <!-- Sky -->
+          <rect width="480" height="600" fill="url(#sky)"/>
+
+          <!-- Ambient blue haze behind city -->
+          <ellipse cx="240" cy="310" rx="300" ry="150" fill="url(#ambientGlow)" filter="url(#glowSoft)" opacity="0.8"/>
+          <ellipse cx="140" cy="280" rx="150" ry="90" fill="rgba(86,128,199,0.05)" filter="url(#glowSoft)"/>
+          <ellipse cx="360" cy="340" rx="120" ry="70" fill="rgba(86,128,199,0.03)" filter="url(#glowSoft)"/>
+
+          <!-- Stars -->
+          <circle cx="45" cy="25" r="0.6" fill="rgba(255,255,255,0.3)"/>
+          <circle cx="130" cy="18" r="0.5" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="280" cy="28" r="0.6" fill="rgba(255,255,255,0.25)"/>
+          <circle cx="410" cy="22" r="0.7" fill="rgba(255,255,255,0.3)"/>
+          <circle cx="200" cy="38" r="0.4" fill="rgba(255,255,255,0.18)"/>
+          <circle cx="360" cy="12" r="0.5" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="88" cy="48" r="0.5" fill="#5680c7" opacity="0.45" filter="url(#glow)"/>
+          <circle cx="460" cy="32" r="0.5" fill="rgba(255,255,255,0.22)"/>
+
+          <!-- Deep background silhouettes -->
+          <polygon points="10,430 10,385 35,385 35,370 55,370 55,395 75,395 75,360 90,360 90,430" fill="#1a1e32" opacity="0.25"/>
+          <polygon points="395,430 395,375 420,375 420,360 445,360 445,385 470,385 470,430" fill="#1a1e32" opacity="0.2"/>
+
+          <!-- Horizon glow -->
+          <line x1="0" y1="435" x2="480" y2="435" stroke="rgba(86,128,199,0.07)" stroke-width="2"/>
+
+          <!-- ====== FUTURISTIC CITY ====== -->
+
+          <!-- Building A: Diagonal-slant tower (left), leans right -->
+          <polygon points="20,440 20,330 55,295 75,295 75,340 100,340 100,440" fill="#1a1e30"/>
+          <polygon points="20,440 20,330 55,295 75,295 75,340 100,340 100,440" fill="rgba(86,128,199,0.06)"/>
+          <line x1="20" y1="330" x2="55" y2="295" stroke="rgba(86,128,199,0.35)" stroke-width="1.2" filter="url(#glow)"/>
+          <line x1="55" y1="295" x2="75" y2="295" stroke="rgba(86,128,199,0.2)" stroke-width="0.8"/>
+          <line x1="20" y1="330" x2="20" y2="440" stroke="rgba(86,128,199,0.15)" stroke-width="1" filter="url(#glow)"/>
+          <!-- Diagonal window slits -->
+          <line x1="30" y1="380" x2="55" y2="370" stroke="#5680c7" stroke-width="1.2" opacity="0.45" filter="url(#glow)"/>
+          <line x1="30" y1="400" x2="60" y2="390" stroke="#5680c7" stroke-width="0.8" opacity="0.3" filter="url(#glow)"/>
+
+          <!-- Building B: Cantilever tower with overhang -->
+          <polygon points="105,440 105,280 125,280 125,260 145,260 145,310 170,310 170,440" fill="#1c2236"/>
+          <polygon points="105,440 105,280 125,280 125,260 145,260 145,310 170,310 170,440" fill="rgba(86,128,199,0.08)"/>
+          <!-- Overhang -->
+          <polygon points="125,280 125,260 165,260 165,280" fill="#242a40" opacity="0.7"/>
+          <line x1="125" y1="280" x2="165" y2="280" stroke="rgba(86,128,199,0.25)" stroke-width="0.8"/>
+          <line x1="125" y1="260" x2="125" y2="280" stroke="rgba(86,128,199,0.3)" stroke-width="1" filter="url(#glow)"/>
+          <!-- Core edge -->
+          <line x1="105" y1="280" x2="105" y2="440" stroke="rgba(86,128,199,0.22)" stroke-width="1" filter="url(#glow)"/>
+          <!-- Windows -->
+          <rect x="115" y="320" width="1" height="8" fill="#5680c7" opacity="0.4" filter="url(#glow)"/>
+          <rect x="140" y="340" width="1" height="6" fill="#5680c7" opacity="0.35" filter="url(#glow)"/>
+          <rect x="155" y="360" width="1" height="8" fill="#5680c7" opacity="0.45" filter="url(#glow)"/>
+
+          <!-- Floating ring/ellipse (orbital structure) -->
+          <ellipse cx="240" cy="310" rx="55" ry="18" fill="none" stroke="rgba(86,128,199,0.2)" stroke-width="0.8" filter="url(#glow)"/>
+          <ellipse cx="240" cy="310" rx="55" ry="18" fill="none" stroke="rgba(86,128,199,0.08)" stroke-width="0.4"/>
+          <circle cx="210" cy="308" r="1" fill="#5680c7" opacity="0.6" filter="url(#glowStrong)"/>
+          <circle cx="270" cy="312" r="0.8" fill="#5680c7" opacity="0.5" filter="url(#glow)"/>
+
+          <!-- Building C: Twin asymmetric spires -->
+          <polygon points="175,440 175,340 195,340 195,300 210,300 210,330 230,330 230,440" fill="#1e2438"/>
+          <polygon points="175,440 175,340 195,340 195,300 210,300 210,330 230,330 230,440" fill="rgba(86,128,199,0.07)"/>
+          <!-- Left spire -->
+          <line x1="185" y1="300" x2="185" y2="265" stroke="rgba(86,128,199,0.4)" stroke-width="1" filter="url(#glow)"/>
+          <circle cx="185" cy="265" r="1.3" fill="#5680c7" filter="url(#glowStrong)" opacity="0.8"/>
+          <!-- Right spire -->
+          <line x1="220" y1="330" x2="220" y2="290" stroke="rgba(86,128,199,0.3)" stroke-width="0.8" filter="url(#glow)"/>
+          <circle cx="220" cy="290" r="0.8" fill="#5680c7" filter="url(#glow)" opacity="0.6"/>
+          <!-- Edges -->
+          <line x1="175" y1="340" x2="175" y2="440" stroke="rgba(86,128,199,0.18)" stroke-width="1" filter="url(#glow)"/>
+          <line x1="230" y1="330" x2="230" y2="440" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+          <!-- Building D: Pyramid/inverted ziggurat -->
+          <polygon points="240,440 240,400 260,380 280,380 300,400 300,440" fill="#1a2034"/>
+          <polygon points="240,440 240,400 260,380 280,380 300,400 300,440" fill="rgba(86,128,199,0.05)"/>
+          <line x1="240" y1="400" x2="260" y2="380" stroke="rgba(86,128,199,0.25)" stroke-width="1" filter="url(#glow)"/>
+          <line x1="280" y1="380" x2="300" y2="400" stroke="rgba(86,128,199,0.2)" stroke-width="0.8"/>
+          <!-- Horizontal slit band -->
+          <rect x="252" y="405" width="36" height="1.2" fill="rgba(86,128,199,0.35)" filter="url(#glow)"/>
+
+          <!-- Building E: Curved/organic tower (right side) -->
+          <path d="M310,440 L310,380 Q315,350 330,330 Q345,310 360,320 Q375,330 370,360 L370,440 Z" fill="#1c2236"/>
+          <path d="M310,440 L310,380 Q315,350 330,330 Q345,310 360,320 Q375,330 370,360 L370,440 Z" fill="rgba(86,128,199,0.07)"/>
+          <path d="M310,380 Q315,350 330,330 Q345,310 360,320" fill="none" stroke="rgba(86,128,199,0.3)" stroke-width="1.2" filter="url(#glow)"/>
+          <!-- Window lights -->
+          <circle cx="330" cy="365" r="1" fill="#5680c7" opacity="0.5" filter="url(#glow)"/>
+          <circle cx="345" cy="350" r="0.8" fill="#5680c7" opacity="0.4" filter="url(#glow)"/>
+          <circle cx="340" cy="390" r="0.7" fill="#5680c7" opacity="0.35" filter="url(#glow)"/>
+
+          <!-- Building F: Far right angled prow -->
+          <polygon points="380,440 380,370 410,330 430,330 430,440" fill="#1a1e30"/>
+          <polygon points="380,440 380,370 410,330 430,330 430,440" fill="rgba(86,128,199,0.06)"/>
+          <line x1="380" y1="370" x2="410" y2="330" stroke="rgba(86,128,199,0.35)" stroke-width="1.2" filter="url(#glow)"/>
+          <line x1="410" y1="330" x2="430" y2="330" stroke="rgba(86,128,199,0.2)" stroke-width="0.8"/>
+          <line x1="430" y1="330" x2="430" y2="440" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+          <!-- Floating geometric fragment above city -->
+          <polygon points="115,210 130,195 145,205 130,220" fill="rgba(86,128,199,0.08)" stroke="rgba(86,128,199,0.2)" stroke-width="0.6"/>
+          <circle cx="130" cy="208" r="0.6" fill="#5680c7" opacity="0.5" filter="url(#glow)"/>
+
+          <!-- Diagonal light streak across sky -->
+          <line x1="80" y1="140" x2="200" y2="220" stroke="rgba(86,128,199,0.06)" stroke-width="0.5"/>
+          <line x1="85" y1="142" x2="202" y2="222" stroke="rgba(86,128,199,0.03)" stroke-width="1.5"/>
+
+          <!-- Ground plane -->
+          <rect x="0" y="440" width="480" height="160" fill="rgba(8,10,20,0.88)"/>
+
+          <!-- Ground blue light pools -->
+          <ellipse cx="140" cy="465" rx="100" ry="10" fill="url(#glowPool)" filter="url(#glowSoft)"/>
+          <ellipse cx="280" cy="460" rx="90" ry="7" fill="url(#glowPool)" opacity="0.5"/>
+          <ellipse cx="398" cy="455" rx="50" ry="6" fill="url(#glowPool)" opacity="0.35"/>
+
+          <!-- Foreground accent lights (ground level) -->
+          <circle cx="80" cy="450" r="0.8" fill="#5680c7" filter="url(#glow)" opacity="0.5"/>
+          <circle cx="150" cy="455" r="1" fill="#5680c7" filter="url(#glow)" opacity="0.6"/>
+          <circle cx="230" cy="448" r="0.9" fill="#5680c7" filter="url(#glow)" opacity="0.45"/>
+          <circle cx="320" cy="452" r="0.8" fill="#5680c7" filter="url(#glow)" opacity="0.5"/>
+          <circle cx="410" cy="447" r="1" fill="#5680c7" filter="url(#glow)" opacity="0.55"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <p class="section-label">Contact</p>
+    <h2 class="section-title fade-in">Start a project. Let's talk about what you're building.</h2>
+    <a href="mailto:david@bluevisualstudio.com" class="contact-email fade-in">david@bluevisualstudio.com</a>
+    <div class="contact-social fade-in">
+      <a href="https://www.instagram.com/bluevisualcg/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.instagram.com/bluevisualcg/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.instagram.com/bluevisualcg/" target="_blank" rel="noopener">Behance</a>
+    </div>
+  </section>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close">&times;</button>
+    <button class="lightbox-prev" id="lightbox-prev">&lsaquo;</button>
+    <button class="lightbox-next" id="lightbox-next">&rsaquo;</button>
+    <img src="" alt="" id="lightbox-img">
+  </div>
+
+  <footer class="fade-in">
+    <span>&copy; 2025 Blue Visual. All rights reserved.</span>
+    <span>Architectural Visualization Studio</span>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    /* Lightbox */
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const workItems = [...document.querySelectorAll('.work-item img')];
+    let currentIdx = -1;
+
+    workItems.forEach((img, i) => {
+      img.addEventListener('click', () => { currentIdx = i; show(); });
+    });
+
+    function show() {
+      lightboxImg.src = workItems[currentIdx].src;
+      lightbox.classList.add('active');
+    }
+    function close() { lightbox.classList.remove('active'); }
+    function prev() { currentIdx = (currentIdx - 1 + workItems.length) % workItems.length; show(); }
+    function next() { currentIdx = (currentIdx + 1) % workItems.length; show(); }
+
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.getElementById('lightbox-prev').addEventListener('click', prev);
+    document.getElementById('lightbox-next').addEventListener('click', next);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    });
+  </script>
+
+</body>
+</html>
